@@ -30,6 +30,7 @@ int main(int argc, char *argv[])
     {
         A[i] = (double *)malloc(sizeof(double) * (n + 1));
     }
+    double *X = (double *) malloc(sizeof(double) * n);
 
     for (int i = 0; i < n; ++i)
     {
@@ -43,7 +44,7 @@ int main(int argc, char *argv[])
         fscanf(DATA, "%lf", &A[i][n]);
     }
 
-    double *X = (double *) malloc(sizeof(double) * n);
+    is_diagonally_dominant(A, n);
 
     int opt;
     while ((opt = getopt(argc, argv, "aor")) != -1)
@@ -51,13 +52,13 @@ int main(int argc, char *argv[])
         switch (opt)
         {
         case 'a':
-            solve_jacoby(A, X);
+            solve_jacoby(A, X, n);
             break;
         case 'o':
-            solve_jordan(A, X);
+            solve_jordan(A, X, n);
             break;
         case 'r':
-            solve_relaxation(A, X);
+            solve_relaxation(A, X, n);
             break;
         default:
             fprintf(stderr, "Usage: \n\t-a for Jacobi method. \n\t-o for Jordan method. \n\t-r for relaxation method.\n");
@@ -72,6 +73,14 @@ int main(int argc, char *argv[])
     {
         fprintf(RESULT, "%10e\n", X[i]);
     }
+
+    free(X);
+    for (int i = 0; i < n; i++)
+    {
+        free(A[i]);
+    }
+    free(A);
+    
 
     return 0;
 }
