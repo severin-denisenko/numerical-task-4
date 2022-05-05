@@ -1,5 +1,8 @@
 all: build $(wildcard *.dat)
-	./build -o
+	./build -a
 
 build: $(wildcard *.c *.h)
-	clang -O3 *.c -o build
+	g++-11 -O3 *.c -o build
+
+clean:
+	rm -rf build result.dat
