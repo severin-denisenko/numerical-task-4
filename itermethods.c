@@ -59,11 +59,11 @@ int solve_jacoby(double **A, double *X, int n)
         }
 
         // Debug
-        for (int i = 0; i < n; i++)
-        {
-            printf("%le ", X2[i]);
-        }
-        printf("\n");
+        // for (int i = 0; i < n; i++)
+        // {
+        //     printf("%le ", X2[i]);
+        // }
+        // printf("\n");
 
         if (get_residue(X1, X2, n) < min_tolerance)
         {
@@ -146,11 +146,11 @@ int solve_jordan(double **A, double *X, int n)
         }
 
         // Debug
-        for (int i = 0; i < n; i++)
-        {
-            printf("%le ", X2[i]);
-        }
-        printf("\n");
+        // for (int i = 0; i < n; i++)
+        // {
+        //     printf("%le ", X2[i]);
+        // }
+        // printf("\n");
 
         double *tmp = X1;
         X1 = X2;
@@ -236,11 +236,11 @@ int solve_relaxation(double **A, double *X, int n)
         }
 
         // Debug
-        for (int i = 0; i < n; i++)
-        {
-            printf("%le ", X[i]);
-        }
-        printf("\n");
+        // for (int i = 0; i < n; i++)
+        // {
+        //     printf("%le ", X[i]);
+        // }
+        // printf("\n");
 
         double *tmp = Q1;
         Q1 = Q2;
