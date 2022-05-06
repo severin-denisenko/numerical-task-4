@@ -58,6 +58,13 @@ int solve_jacoby(double **A, double *X, int n)
             }
         }
 
+        // Debug
+        for (int i = 0; i < n; i++)
+        {
+            printf("%le ", X2[i]);
+        }
+        printf("\n");
+
         if (get_residue(X1, X2, n) < min_tolerance)
         {
             break;
@@ -127,7 +134,7 @@ int solve_jordan(double **A, double *X, int n)
                 X2[i] -= A1[i][j] * X1[j];
             }
 
-            for (int j = 0; j < i - 1; j++)
+            for (int j = 0; j < i; j++)
             {
                 X2[i] -= A1[i][j] * X2[j];
             }
@@ -137,6 +144,13 @@ int solve_jordan(double **A, double *X, int n)
         {
             break;
         }
+
+        // Debug
+        for (int i = 0; i < n; i++)
+        {
+            printf("%le ", X2[i]);
+        }
+        printf("\n");
 
         double *tmp = X1;
         X1 = X2;
@@ -164,66 +178,82 @@ int solve_relaxation(double **A, double *X, int n)
 {
     // Копирование с делением
 
-    double **A1 = (double **)malloc(sizeof(double *) * n);
+    double **P = (double **)malloc(sizeof(double *) * n);
     for (int i = 0; i < n; ++i)
     {
-        A1[i] = (double *)malloc(sizeof(double) * (n + 1));
+        P[i] = (double *)malloc(sizeof(double) * n);
     }
+
+    double *Q1 = (double *)malloc(sizeof(double) * n);
+    double *Q2 = (double *)malloc(sizeof(double) * n);
 
     for (int i = 0; i < n; i++)
     {
-        for (int j = 0; j < n + 1; j++)
+        for (int j = 0; j < n; j++)
         {
             if (A[i][i] == 0)
             {
                 fprintf(stderr, "Error: element (%d, %d) is 0.\n", i, i);
                 exit(1);
             }
-            A1[i][j] = A[i][j] / A[i][i];
+            P[i][j] = - A[i][j] / A[i][i];
         }
+    }
+
+    for (int i = 0; i < n; i++)
+    {
+        Q1[i] = A[i][n] / A[i][i];
+        Q2[i] = 0;
     }
 
     for (int i = 0; i < n; i++)
     {
         X[i] = 0;
     }
-    
+
     for (int k = 0; k < max_iterations; k++)
     {
         int max_i = 0;
 
         for (int i = 0; i < n; i++)
         {
-            if (fabs(A1[max_i][n]) < fabs(A1[i][n]))
+            if (fabs(Q1[max_i]) < fabs(Q1[i]))
             {
                 max_i = i;
             }
         }
 
-        if (A1[max_i][n] < min_tolerance)
+        if (fabs(Q1[max_i]) < min_tolerance)
         {
             break;
         }
 
-        X[max_i] = X[max_i] + A1[max_i][n];
+        X[max_i] = X[max_i] + Q1[max_i];
 
+        for (int i = 0; i < n; i++)
+        {
+            Q2[i] = Q1[i] + P[i][max_i] * Q1[max_i];
+        }
+
+        // Debug
         for (int i = 0; i < n; i++)
         {
             printf("%le ", X[i]);
         }
         printf("\n");
 
-        for (int i = 0; i < n; i++)
-        {
-            A1[i][n] = A1[i][n] - A1[max_i][i] * A1[max_i][n];
-        }
+        double *tmp = Q1;
+        Q1 = Q2;
+        Q2 = tmp;
     }
 
     for (int i = 0; i < n; i++)
     {
-        free(A1[i]);
+        free(P[i]);
     }
-    free(A1);
+    free(P);
+    free(Q1);
+    free(Q2);
 
     return 0;
 }
